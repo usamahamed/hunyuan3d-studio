@@ -13,14 +13,13 @@
         <input
           v-model="modelUrl"
           class="field-input"
-          placeholder="https://…/model.glb"
+          placeholder="https://…/model.fbx"
           type="url"
         />
-        <select v-model="modelType" class="field-input type-select">
-          <option value="GLB">GLB</option>
+        <select v-model="modelType" class="field-input type-select" disabled>
           <option value="FBX">FBX</option>
-          <option value="OBJ">OBJ</option>
         </select>
+        <div class="field-hint">⚠ Texture Edit only supports FBX format (API limitation)</div>
       </div>
       <div v-if="prefillNote" class="prefill-note">📌 Pre-filled from generation result</div>
     </div>
@@ -102,7 +101,7 @@ const props = defineProps({
 const emit = defineEmits(['job-submitted'])
 
 const modelUrl = ref(props.prefillModelUrl || '')
-const modelType = ref(props.prefillModelType || 'GLB')
+const modelType = ref('FBX') // Texture Edit API only supports FBX
 const prefillNote = ref(!!props.prefillModelUrl)
 
 watch(() => props.prefillModelUrl, (v) => {
@@ -156,7 +155,7 @@ async function submit() {
     emit('job-submitted', {
       ...data,
       type: 'TEXTURE EDIT',
-      queryAction: 'QueryHunyuanTo3DProJob',
+      queryAction: 'QueryHunyuanTo3DTextureEditJob',
       inputPreview,
       inputLabel: `Texture → ${modelUrl.value.split('/').pop()}`,
       chips: [modelType.value, textureMode.value, ...(enablePBR.value ? ['PBR'] : [])],
